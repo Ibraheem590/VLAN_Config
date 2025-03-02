@@ -1,0 +1,121 @@
+ 
+				VLAN Configuration.
+
+Objective:
+
+•To configure VLANs on a Layer 2 switch and show that devices on different VLANs cannot communicate without routing.
+•To configure Inter-VLAN Routing using a Layer 3 switch and allow devices on different VLANs to communicate.
+ 
+1.Layer 2 Switch Configuration (Without Routing)
+ 
+ 
+🔧 VLAN Configuration on Switch
+1.     Create VLANs on the layer 2 Switch
+            Click on the switch, go to the CLI tab and type the following commands.
+	Switch>enable
+	Switch# configure terminal
+	Switch(config) vlan 10
+	Switch(config-vlan) name Sales
+	Switch(config-vlan) vlan 20
+	Switch(config-vlan) name HR
+	Switch(config) end
+ 
+2.     Assign Ports to VLANs
+	Switch(config) interface FastEthernet 0/1
+	Switch(config-if) switchport mode access
+	Switch(config-if) switchport access vlan 10
+	Switch(config-if) exit
+ 
+	Switch(config) interface FastEthernet 0/2
+	Switch(config-if) switchport mode access
+	Switch(config-if) switchport access vlan 20
+	Switch(config-if) exit
+ 
+3.     Inter-VLAN Routing Using a Router
+            Create Subinterfaces for VLAN on the Router
+         Router>enable 
+         Router# configure terminal
+         Router(config) interface GigabitEthernet 0/0.10
+         Router(config-if) encapsulation dot1Q 10  
+         Router(config-if) ip address 192.168.10.1 255.255.255.0 
+         Router(config-if) exit
+ 
+         Router(config) interface GigabitEthernet 0/0.20
+         Router(config-if) encapsulation dot1Q 10  
+         Router(config-if) ip address 192.168.20.1 255.255.255.0 
+         Router(config-if) exit
+ 
+         Router(config) interface GigabitEthernet 0/0
+         Router(config-if) no shutdown
+         Router(config-if) exit
+ 
+4.     Set Default Gateway on each PC
+	VLAN		PC IP Address		Default Gateway
+VLAN 1O (SALES)		192.168.10.10 /24	192.168.10.1
+VLAN 20 (HR)		192.168.20.10 /24	192.168.20.1
+
+5.     ✅ Testing & Verification
+	After setting everything up, test Inter-VLAN communication.
+	From VLAN 10 to VLAN 20
+            ping 192.168.20.10
+	If everything is configured correctly, you should receive a reply message 	confirming that the PC in vlan10 can communicate with the PC in vlan 20
+
+
+ 
+2.    Layer 3 Switch Configuration (With Inter-VLAN Routing)
+
+🔧 VLAN Configuration on Switch
+1.     Create VLANs on the layer 3 Switch
+            Click on the switch, go to the CLI tab and type the following commands.
+	Switch>enable
+	Switch# configure terminal
+	Switch(config) vlan 10
+	Switch(config-vlan) name Sales
+	Switch(config-vlan) vlan 20
+	Switch(config-vlan) name HR
+ 
+2.     Assign Ports to VLANs
+	Switch(config) interface FastEthernet 0/1
+	Switch(config-if) switchport mode access
+	Switch(config-if) switchport access vlan 10
+	Switch(config-if) exit
+ 
+	Switch(config) interface FastEthernet 0/2
+	Switch(config-if) switchport mode access
+	Switch(config-if) switchport access vlan 20
+	Switch(config-if) exit
+ 
+3.     Enable routing on the layer 3 switch
+            Switch(config) ip routing
+4.     Create Switch Virtual Interfaces (SVIs)
+            Click on the Switch, go to the CLI tab and type the following commands.
+	Switch>enable
+	Switch # configure terminal
+	Switch (config) interface vlan 10
+	Switch (config-if) ip address 192.168.10.1 255.255.255.0
+	Switch (config-if) no shutdown
+	Switch (config-if) exit
+ 
+	Switch (config) interface vlan 20
+	Switch (config-if) ip address 192.168.20.1 255.255.255.0
+	Switch (config-if) no shutdown
+	Switch (config-if) exit
+ 
+5.     Set Default Gateway on each PC
+	VLAN		PC IP Address		Default Gateway
+VLAN 1O (SALES)		192.168.10.10 /24	192.168.10.1
+VLAN 20 (HR)		192.168.20.10 /24	192.168.20.1
+
+ 
+ 
+✅ Testing & Verification
+	After setting everything up, test Inter-VLAN communication.
+	From VLAN 10 to VLAN 20
+
+		ping 192.168.20.10
+
+	if everything is configured correctly, you should receive a reply message 	confirming that the PC in vlan10 can communicate with the PC in vlan 20
+ 
+ 
+ 
+ 
